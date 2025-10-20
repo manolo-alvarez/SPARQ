@@ -1,0 +1,204 @@
+# SGM Agent Default Configuration
+# Per-environment defaults for retrieval, prior, lookahead, and elastic-k parameters
+
+# Global defaults
+global:
+  embedding_dim: 768
+  use_faiss: false
+  use_gpu: false
+  log_level: normal
+  log_buffer_size: 100
+
+# Feature flags for ablations
+ablations:
+  prior_off: false         # Disable similarity-weighted prior
+  lookahead_off: false     # Disable shallow simulations
+  elastic_off: false       # Disable adaptive k (use fixed_k)
+  fixed_alpha: null        # Override alpha annealing (0.0-1.0 or null)
+  calibrate_returns: true  # Apply calibration to returns
+
+# Candidate generation
+candidates:
+  num_candidates: 5  # K candidates from base agent
+
+# Elastic-k configuration
+elastic_k:
+  mode: entropy           # "entropy", "variance", "similarity", or "fixed"
+  k_min: 8
+  k_max: 64
+  lambda_scale: 16.0
+  fixed_k: 32            # Used when elastic_off=true
+  use_hysteresis: false
+  hysteresis_smoothing: 0.5
+
+# Prior module configuration
+prior:
+  outcome_type: return    # "return" or "success_logit"
+  temperature: 10.0       # τ for similarity weighting
+  gamma: 8.0              # α annealing temperature
+  s0: 0.3                 # α annealing threshold
+  calibration_scale: 1.0
+  calibration_shift: 0.0
+
+# Lookahead module configuration
+lookahead:
+  num_rollouts: 4         # L rollouts per candidate
+  depth: 2                # d steps per rollout
+  max_time_seconds: 5.0
+  max_tokens: 2000
+  aggregation: mean       # "mean" or "cvar"
+  cvar_alpha: 0.25        # For CVaR aggregation
+  rubric_type: default
+  success_weight: 1.0
+  failure_weight: -1.0
+  length_weight: 0.1
+
+# Retrieval filters
+retrieval:
+  use_stage_filters: false
+
+# Per-environment overrides
+environments:
+  # WebShop: High reward scale, needs calibration
+  webshop:
+    prior:
+      calibration_scale: 0.1
+      temperature: 15.0
+    elastic_k:
+      k_min: 16
+      k_max: 64
+      lambda_scale: 12.0
+  
+  # ALFWorld: Sparse rewards, rely more on lookahead
+  alfworld:
+    prior:
+      gamma: 5.0
+      s0: 0.4
+    lookahead:
+      num_rollouts: 6
+      depth: 3
+    elastic_k:
+      k_min: 8
+      k_max: 48
+  
+  # ScienceWorld: Complex actions, need more candidates
+  sciworld:
+    candidates:
+      num_candidates: 8
+    lookahead:
+      depth: 3
+      max_time_seconds: 8.0
+    elastic_k:
+      k_min: 12
+      k_max: 64
+  
+  # WebArena: Tool preconditions important
+  webarena:
+    lookahead:
+      rubric_type: tool_precondition
+      num_rollouts: 5
+    elastic_k:
+      k_min: 10
+      k_max: 56
+  
+  # BabyAI: Simple, fast inference
+  babyai:
+    lookahead:
+      num_rollouts: 2
+      depth: 1
+      max_time_seconds: 2.0
+    elastic_k:
+      k_min: 4
+      k_max: 32
+      lambda_scale: 8.0
+  
+  # TextCraft: Subgoal hierarchies
+  textcraft:
+    lookahead:
+      rubric_type: subgoal_progress
+      depth: 3
+    elastic_k:
+      mode: similarity
+      k_min: 12
+      k_max: 64
+  
+  # SearchQA: High similarity concentration
+  searchqa:
+    elastic_k:
+      mode: similarity
+      k_min: 6
+      k_max: 48
+    prior:
+      temperature: 12.0
+  
+  # SQLGym: Precision matters, use CVaR
+  sqlgym:
+    lookahead:
+      aggregation: cvar
+      cvar_alpha: 0.2
+    prior:
+      gamma: 10.0
+  
+  # LMRLGym (Maze): Spatial reasoning
+  lmrlgym_maze:
+    lookahead:
+      num_rollouts: 8
+      depth: 2
+    elastic_k:
+      k_min: 8
+      k_max: 56
+  
+  # LMRLGym (Wordle): Deterministic scoring
+  lmrlgym_wordle:
+    lookahead:
+      num_rollouts: 3
+      depth: 1
+    elastic_k:
+      k_min: 4
+      k_max: 32
+
+# Baseline configurations for ablations
+baselines:
+  # Pure base ReAct agent
+  base_react:
+    prior_off: true
+    lookahead_off: true
+    elastic_off: true
+  
+  # ReAct + prior (fixed k)
+  react_prior:
+    lookahead_off: true
+    elastic_off: true
+    fixed_k: 32
+  
+  # ReAct + lookahead (no prior)
+  react_lookahead:
+    prior_off: true
+    elastic_off: true
+    fixed_k: 32
+  
+  # ReAct + prior + lookahead (fixed k)
+  react_prior_lookahead_fixed:
+    elastic_off: true
+    fixed_k: 32
+  
+  # Full SGM (elastic k)
+  sgm_full:
+    prior_off: false
+    lookahead_off: false
+    elastic_off: false
+
+# Alpha sweep configurations for ablations
+alpha_sweeps:
+  alpha_0.0:
+    fixed_alpha: 0.0  # Pure lookahead
+  alpha_0.2:
+    fixed_alpha: 0.2
+  alpha_0.4:
+    fixed_alpha: 0.4
+  alpha_0.6:
+    fixed_alpha: 0.6
+  alpha_0.8:
+    fixed_alpha: 0.8
+  alpha_1.0:
+    fixed_alpha: 1.0  # Pure prior
