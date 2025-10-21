@@ -7,8 +7,8 @@ Tests entropy, variance, and similarity-based uncertainty mappings.
 import numpy as np
 import pytest
 
-from sgm_agent.base_agent_iface import Candidate
-from sgm_agent.elastic_k import (
+from sparq_agent.base_agent_iface import Candidate
+from sparq_agent.elastic_k import (
     EntropyElasticK,
     VarianceElasticK,
     SimilarityConcentrationElasticK,

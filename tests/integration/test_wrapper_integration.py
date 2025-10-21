@@ -9,13 +9,13 @@ import pytest
 import tempfile
 import os
 
-from sgm_agent.base_agent_iface import BaseAgent, Candidate
-from sgm_agent.elastic_k import FixedKController
-from sgm_agent.lookahead import ShallowSimulator, DefaultRubric
-from sgm_agent.prior import SimWeightedPrior
-from sgm_agent.retrieval import InMemoryRetrievalStore
-from sgm_agent.wrapper import SGMPolicyWrapper, SimpleEmbeddingFunction
-from sgm_agent.logging import TelemetryLogger
+from sparq_agent.base_agent_iface import BaseAgent, Candidate
+from sparq_agent.elastic_k import FixedKController
+from sparq_agent.lookahead import ShallowSimulator, DefaultRubric
+from sparq_agent.prior import SimWeightedPrior
+from sparq_agent.retrieval import InMemoryRetrievalStore
+from sparq_agent.wrapper import SPARQPolicyWrapper, SimpleEmbeddingFunction
+from sparq_agent.logging import TelemetryLogger
 
 
 class MockBaseAgent(BaseAgent):
@@ -81,7 +81,7 @@ class TestPolicyWrapperIntegration:
             },
         }
         
-        wrapper = SGMPolicyWrapper(
+        wrapper = SPARQPolicyWrapper(
             base_agent=base_agent,
             retrieval_module=retrieval_module,
             prior_module=prior_module,
@@ -104,7 +104,7 @@ class TestPolicyWrapperIntegration:
         assert diagnostics["selected_action"] == action
     
     def test_fallback_on_error(self):
-        """Test wrapper falls back to base agent on errors."""
+        """Test wrapper gracefully degrades when retrieval fails."""
         base_agent = MockBaseAgent()
         
         # Create a failing retrieval module
@@ -122,7 +122,7 @@ class TestPolicyWrapperIntegration:
         
         config = {"env_id": "test_env"}
         
-        wrapper = SGMPolicyWrapper(
+        wrapper = SPARQPolicyWrapper(
             base_agent=base_agent,
             retrieval_module=retrieval_module,
             prior_module=prior_module,
@@ -136,8 +136,12 @@ class TestPolicyWrapperIntegration:
         obs = {"instruction": "Test", "observation": "State"}
         action, diagnostics = wrapper.step(obs)
         
-        # Should fall back
-        assert diagnostics.get("fallback", False)
+        # Should gracefully degrade (not full fallback)
+        # Check that retrieval error was caught but pipeline continued
+        assert diagnostics.get("fallback", False) == False  # No fallback, graceful degradation
+        assert len(diagnostics.get("candidate_scores", [])) > 0  # Scoring still happened
+        # Check that retrieval errors were logged
+        assert any("retrieval_error" in score for score in diagnostics.get("candidate_scores", []))
         assert action == "action1"  # Base agent's top candidate
     
     def test_empty_memory(self):
@@ -157,7 +161,7 @@ class TestPolicyWrapperIntegration:
             "lookahead_params": {"num_rollouts": 2, "depth": 2},
         }
         
-        wrapper = SGMPolicyWrapper(
+        wrapper = SPARQPolicyWrapper(
             base_agent=base_agent,
             retrieval_module=retrieval_module,
             prior_module=prior_module,
@@ -194,7 +198,7 @@ class TestPolicyWrapperIntegration:
             
             config = {"env_id": "test_env"}
             
-            wrapper = SGMPolicyWrapper(
+            wrapper = SPARQPolicyWrapper(
                 base_agent=base_agent,
                 retrieval_module=retrieval_module,
                 prior_module=prior_module,
@@ -229,7 +233,7 @@ class TestPolicyWrapperIntegration:
         
         config = {"env_id": "test_env"}
         
-        wrapper = SGMPolicyWrapper(
+        wrapper = SPARQPolicyWrapper(
             base_agent=base_agent,
             retrieval_module=retrieval_module,
             prior_module=prior_module,

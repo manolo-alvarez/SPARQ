@@ -1,5 +1,5 @@
 """
-SGM Agent: A policy wrapper that sits between AgentGym environments and base ReAct agents,
+SPARQ Agent: A policy wrapper that sits between AgentGym environments and base ReAct agents,
 adding retrieval-augmented priors, shallow simulations, and elastic-k memory selection.
 """
 
@@ -15,7 +15,8 @@ from .base_agent_iface import (
     ElasticKModule,
     PolicyWrapper,
 )
-from .registry import register_sgm_agent, create_wrapped_agent
+from .wrapper import SPARQPolicyWrapper
+from .registry import register_sparq_agent, create_wrapped_agent, create_default_sparq_agent
 
 __all__ = [
     "BaseAgent",
@@ -26,6 +27,8 @@ __all__ = [
     "LookaheadModule",
     "ElasticKModule",
     "PolicyWrapper",
-    "register_sgm_agent",
+    "SPARQPolicyWrapper",
+    "register_sparq_agent",
     "create_wrapped_agent",
+    "create_default_sparq_agent",
 ]

@@ -1,5 +1,5 @@
 """
-Abstract interfaces for SGM Agent components.
+Abstract interfaces for SPARQ Agent components.
 
 This module defines the contracts between the policy wrapper and its modules,
 enabling decoupling, testing, and extensibility across AgentGym environments.

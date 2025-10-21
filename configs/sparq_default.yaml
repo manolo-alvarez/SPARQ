@@ -1,4 +1,5 @@
-# SGM Agent Default Configuration
+# SPARQ Agent Default Configuration
+# SPARQ: Similarity Prior with Adaptive Retrieval and Quick lookahead
 # Per-environment defaults for retrieval, prior, lookahead, and elastic-k parameters
 
 # Global defaults
@@ -182,8 +183,8 @@ baselines:
     elastic_off: true
     fixed_k: 32
   
-  # Full SGM (elastic k)
-  sgm_full:
+  # Full SPARQ (elastic k)
+  sparq_full:
     prior_off: false
     lookahead_off: false
     elastic_off: false

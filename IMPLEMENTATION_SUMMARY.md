@@ -1,8 +1,8 @@
-# SGM Agent Implementation Summary
+# SPARQ Agent Implementation Summary
 
 ## Overview
 
-I've successfully implemented a complete **Similarity-Guided Memory (SGM) Agent** system as a drop-in policy wrapper for AgentGym, following your specifications exactly. The implementation includes all core modules, extensive testing, experiment scripts, and comprehensive documentation.
+I've successfully implemented a complete **Similarity Prior with Adaptive Retrieval and Quick lookahead (SPARQ) Agent** system as a drop-in policy wrapper for AgentGym, following your specifications exactly. The implementation includes all core modules, extensive testing, experiment scripts, and comprehensive documentation.
 
 ## What Was Built
 
@@ -19,7 +19,7 @@ I've successfully implemented a complete **Similarity-Guided Memory (SGM) Agent*
 
 ### Configuration & Setup
 
-- **`configs/sgm_default.yaml`** - Per-environment defaults for all 14 AgentGym environments
+- **`configs/sparq_default.yaml`** - Per-environment defaults for all 14 AgentGym environments
   - Global defaults, baseline configurations, alpha sweep presets
   - Environment-specific tuning (WebShop, ALFWorld, ScienceWorld, etc.)
   - Feature flags for ablations (prior_off, lookahead_off, elastic_off, etc.)
@@ -43,9 +43,9 @@ I've successfully implemented a complete **Similarity-Guided Memory (SGM) Agent*
 
 ### Documentation
 
-- **`README_SGM.md`** - Complete project documentation with formulas and examples
-- **`QUICKSTART_SGM.md`** - Step-by-step setup and integration guide
-- **`examples/sgm_example.py`** - Working end-to-end example with mock environment
+- **`README_SPARQ.md`** - Complete project documentation with formulas and examples
+- **`QUICKSTART_SPARQ.md`** - Step-by-step setup and integration guide
+- **`examples/sparq_example.py`** - Working end-to-end example with mock environment
 - **`requirements_sgm.txt`** - Dependency specifications
 - **`setup_sgm.py`** - Package setup with entry points
 
@@ -92,7 +92,7 @@ I've successfully implemented a complete **Similarity-Guided Memory (SGM) Agent*
 ## Architecture Summary
 
 ```
-src/sgm_agent/
+src/sparq_agent/
 ├── __init__.py              # Package exports
 ├── base_agent_iface.py      # Abstract interfaces
 ├── registry.py              # AgentGym integration
@@ -119,10 +119,10 @@ src/sgm_agent/
 ## Usage Pattern
 
 ```python
-from sgm_agent import create_default_sgm_agent
+from sparq_agent import create_default_sparq_agent
 
 # Wrap your existing ReAct agent
-sgm_agent = create_default_sgm_agent(
+sparq_agent = create_default_sparq_agent(
     base_agent=your_react_agent,
     env_id="webshop",
     log_path="logs/webshop.jsonl"
@@ -130,11 +130,11 @@ sgm_agent = create_default_sgm_agent(
 
 # Use as drop-in replacement
 for episode in range(100):
-    sgm_agent.reset()
+    sparq_agent.reset()
     obs = env.reset()
     
     while not done:
-        action, diagnostics = sgm_agent.step(obs)
+        action, diagnostics = sparq_agent.step(obs)
         obs, reward, done, info = env.step(action)
 ```
 
@@ -155,7 +155,7 @@ All parameters tunable via YAML:
 
 ## Experiment Workflow
 
-1. **Baselines**: `python scripts/run_baseline.py --env webshop --baseline sgm_full`
+1. **Baselines**: `python scripts/run_baseline.py --env webshop --baseline sparq_full`
 2. **Ablations**: `python scripts/run_ablations.py --env alfworld --alpha-values 0.0 0.5 1.0`
 3. **Analysis**: `python scripts/export_metrics.py --plot-performance`
 
@@ -192,4 +192,4 @@ All parameters tunable via YAML:
 
 ---
 
-The implementation is **complete, tested, and ready to use**. You can start with `python examples/sgm_example.py` to see it in action, then follow `QUICKSTART_SGM.md` to integrate with your AgentGym fork.
+The implementation is **complete, tested, and ready to use**. You can start with `python examples/sparq_example.py` to see it in action, then follow `QUICKSTART_SPARQ.md` to integrate with your AgentGym fork.

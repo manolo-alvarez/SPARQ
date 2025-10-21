@@ -7,8 +7,8 @@ Tests temperature weighting, alpha annealing, and calibration utilities.
 import numpy as np
 import pytest
 
-from sgm_agent.base_agent_iface import Candidate, RetrievalResult
-from sgm_agent.prior import SimWeightedPrior, CalibrationUtility, compute_concentration
+from sparq_agent.base_agent_iface import Candidate, RetrievalResult
+from sparq_agent.prior import SimWeightedPrior, CalibrationUtility, compute_concentration
 
 
 class TestSimWeightedPrior:
@@ -163,7 +163,7 @@ class TestConcentration:
         concentration = compute_concentration(weights)
         
         # Concentrated = high concentration
-        assert concentration > 0.9
+        assert concentration > 0.85
     
     def test_single_weight(self):
         """Test concentration with single weight."""

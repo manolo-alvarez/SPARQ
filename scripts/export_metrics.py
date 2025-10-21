@@ -14,7 +14,7 @@ from typing import List, Dict
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-from sgm_agent.logging import AggregatedMetrics, DashboardPlotter
+from sparq_agent.logging import AggregatedMetrics, DashboardPlotter
 
 
 def export_summary_csv(results_dir: str, output_csv: str):

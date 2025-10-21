@@ -11,7 +11,7 @@ from .elastic_k import EntropyElasticK, FixedKController, HysteresisElasticK
 from .lookahead import ShallowSimulator, DefaultRubric, simple_continuation_fn
 from .prior import SimWeightedPrior
 from .retrieval import FAISSRetrievalStore, InMemoryRetrievalStore
-from .wrapper import SGMPolicyWrapper, SimpleEmbeddingFunction
+from .wrapper import SPARQPolicyWrapper, SimpleEmbeddingFunction
 from .logging import TelemetryLogger
 
 
@@ -20,9 +20,9 @@ def create_wrapped_agent(
     config: Dict[str, Any],
     continuation_fn: Optional[Callable] = None,
     embedding_fn: Optional[Callable] = None,
-) -> SGMPolicyWrapper:
+) -> SPARQPolicyWrapper:
     """
-    Create an SGM-wrapped agent from a base ReAct agent.
+    Create an SPARQ-wrapped agent from a base ReAct agent.
     
     Args:
         base_agent: Base agent for proposing candidate actions.
@@ -31,7 +31,7 @@ def create_wrapped_agent(
         embedding_fn: Optional embedding function for retrieval.
         
     Returns:
-        SGMPolicyWrapper instance ready to use.
+        SPARQPolicyWrapper instance ready to use.
     """
     # Set up retrieval module
     use_faiss = config.get("use_faiss", False)
@@ -119,7 +119,7 @@ def create_wrapped_agent(
         )
     
     # Create wrapper
-    wrapper = SGMPolicyWrapper(
+    wrapper = SPARQPolicyWrapper(
         base_agent=base_agent,
         retrieval_module=retrieval_module,
         prior_module=prior_module,
@@ -133,9 +133,9 @@ def create_wrapped_agent(
     return wrapper
 
 
-def register_sgm_agent(
+def register_sparq_agent(
     agent_registry: Dict[str, Callable],
-    agent_name: str = "sgm_react",
+    agent_name: str = "sparq_react",
     config_path: Optional[str] = None,
 ) -> None:
     """
@@ -154,22 +154,22 @@ def register_sgm_agent(
         with open(config_path, "r") as f:
             default_config = yaml.safe_load(f)
     
-    def sgm_agent_factory(base_agent: BaseAgent, env_config: Dict[str, Any]) -> SGMPolicyWrapper:
-        """Factory function for creating SGM-wrapped agents."""
+    def sparq_agent_factory(base_agent: BaseAgent, env_config: Dict[str, Any]) -> SPARQPolicyWrapper:
+        """Factory function for creating SPARQ-wrapped agents."""
         # Merge configs: defaults < env_config
         merged_config = {**default_config, **env_config}
         return create_wrapped_agent(base_agent, merged_config)
     
     # Register in AgentGym registry
-    agent_registry[agent_name] = sgm_agent_factory
+    agent_registry[agent_name] = sparq_agent_factory
 
 
 # Convenience function for standalone usage
-def create_default_sgm_agent(
+def create_default_sparq_agent(
     base_agent: BaseAgent,
     env_id: str = "default",
     log_path: Optional[str] = None,
-) -> SGMPolicyWrapper:
+) -> SPARQPolicyWrapper:
     """
     Create an SGM agent with sensible defaults.
     
@@ -179,7 +179,7 @@ def create_default_sgm_agent(
         log_path: Optional path to log file.
         
     Returns:
-        SGMPolicyWrapper instance.
+        SPARQPolicyWrapper instance.
     """
     config = {
         "env_id": env_id,

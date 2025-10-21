@@ -17,8 +17,8 @@ from typing import Any, Dict
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-from sgm_agent.registry import create_wrapped_agent
-from sgm_agent.logging import AggregatedMetrics
+from sparq_agent.registry import create_wrapped_agent
+from sparq_agent.logging import AggregatedMetrics
 
 
 def load_config(config_path: str, env_id: str, baseline: str) -> Dict[str, Any]:
@@ -26,7 +26,7 @@ def load_config(config_path: str, env_id: str, baseline: str) -> Dict[str, Any]:
     Load configuration for a specific environment and baseline.
     
     Args:
-        config_path: Path to sgm_default.yaml.
+        config_path: Path to sparq_default.yaml.
         env_id: Environment identifier.
         baseline: Baseline name (base_react, react_prior, etc.).
         
@@ -101,7 +101,7 @@ def run_experiment(
     config["log_level"] = "normal"
     
     # Create mock base agent (replace with actual AgentGym agent)
-    from sgm_agent.base_agent_iface import BaseAgent, Candidate
+    from sparq_agent.base_agent_iface import BaseAgent, Candidate
     
     class DummyBaseAgent(BaseAgent):
         def propose_actions(self, obs, k=5):
@@ -187,7 +187,7 @@ def run_experiment(
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Run SGM agent baseline experiments")
+    parser = argparse.ArgumentParser(description="Run SPARQ agent baseline experiments")
     parser.add_argument(
         "--env",
         type=str,
@@ -197,13 +197,13 @@ def main():
     parser.add_argument(
         "--baseline",
         type=str,
-        default="sgm_full",
+        default="sparq_full",
         choices=[
             "base_react",
             "react_prior",
             "react_lookahead",
             "react_prior_lookahead_fixed",
-            "sgm_full",
+            "sparq_full",
         ],
         help="Baseline configuration to run",
     )
@@ -216,7 +216,7 @@ def main():
     parser.add_argument(
         "--config",
         type=str,
-        default="configs/sgm_default.yaml",
+        default="configs/sparq_default.yaml",
         help="Path to configuration file",
     )
     parser.add_argument(

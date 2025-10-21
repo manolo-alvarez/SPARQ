@@ -1,17 +1,23 @@
 """
-Example usage of SGM Agent with a simple mock environment.
+Example usage of SPARQ Agent with a simple mock environment.
 
 Demonstrates the full workflow: agent creation, episode execution, logging, and analysis.
 """
+
+import sys
+from pathlib import Path
+
+# Add src to Python path
+sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 import numpy as np
 import tempfile
 import os
 
-# Import SGM Agent components
-from sgm_agent.base_agent_iface import BaseAgent, Candidate
-from sgm_agent.registry import create_default_sgm_agent
-from sgm_agent.logging import AggregatedMetrics
+# Import SPARQ Agent components
+from sparq_agent.base_agent_iface import BaseAgent, Candidate
+from sparq_agent.registry import create_default_sparq_agent
+from sparq_agent.logging import AggregatedMetrics
 
 
 class SimpleReActAgent(BaseAgent):
@@ -108,9 +114,9 @@ class MockEnvironment:
 
 
 def run_example():
-    """Run a complete example with SGM Agent."""
+    """Run a complete example with SPARQ Agent."""
     print("="*60)
-    print("SGM Agent Example")
+    print("SPARQ Agent Example")
     print("="*60)
     
     # Create temporary directory for logs
@@ -121,8 +127,8 @@ def run_example():
         base_agent = SimpleReActAgent()
         
         # Wrap with SGM
-        print("\nCreating SGM-wrapped agent...")
-        sgm_agent = create_default_sgm_agent(
+        print("\nCreating SPARQ-wrapped agent...")
+        sparq_agent = create_default_sparq_agent(
             base_agent,
             env_id="mock_shop",
             log_path=log_path,
@@ -140,7 +146,7 @@ def run_example():
             print(f"Episode {episode_id + 1}/{num_episodes}")
             print(f"{'='*60}")
             
-            sgm_agent.reset()
+            sparq_agent.reset()
             obs = env.reset()
             
             episode_reward = 0.0
@@ -149,7 +155,7 @@ def run_example():
             done = False
             while not done:
                 # Agent selects action
-                action, diagnostics = sgm_agent.step(obs)
+                action, diagnostics = sparq_agent.step(obs)
                 
                 print(f"\nStep {episode_steps + 1}:")
                 print(f"  Observation: {obs['observation'][:60]}...")
@@ -178,8 +184,8 @@ def run_example():
             })
             
             # Log episode summary
-            if sgm_agent.logger:
-                sgm_agent.logger.log_episode_summary(episode_id, success, episode_steps)
+            if sparq_agent.logger:
+                sparq_agent.logger.log_episode_summary(episode_id, success, episode_steps)
             
             print(f"\nEpisode {episode_id + 1} complete:")
             print(f"  Success: {success}")
@@ -187,8 +193,8 @@ def run_example():
             print(f"  Total reward: {episode_reward:.1f}")
         
         # Close logger
-        if sgm_agent.logger:
-            sgm_agent.logger.close()
+        if sparq_agent.logger:
+            sparq_agent.logger.close()
         
         # Analyze results
         print(f"\n{'='*60}")

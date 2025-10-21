@@ -20,7 +20,7 @@ from ..base_agent_iface import (
 )
 
 
-class SGMPolicyWrapper(PolicyWrapperInterface):
+class SPARQPolicyWrapper(PolicyWrapperInterface):
     """
     Orchestrating policy wrapper for the SGM agent.
     
@@ -146,7 +146,7 @@ class SGMPolicyWrapper(PolicyWrapperInterface):
             
             diagnostics["selected_candidate_idx"] = best_idx
             diagnostics["selected_action"] = selected_action
-            diagnostics["selection_method"] = "sgm_blend"
+            diagnostics["selection_method"] = "sparq_blend"
             
         except Exception as e:
             # Fallback to base agent's top candidate

@@ -1,0 +1,22 @@
+{
+  "env_name": "webshop",
+  "baseline": "sparq_full",
+  "num_episodes": 2,
+  "seed": 42,
+  "episodes": [
+    {
+      "episode_id": 0,
+      "success": true,
+      "steps": 11
+    },
+    {
+      "episode_id": 1,
+      "success": true,
+      "steps": 11
+    }
+  ],
+  "summary": {
+    "success_rate": 1.0,
+    "avg_steps": 11.0
+  }
+}

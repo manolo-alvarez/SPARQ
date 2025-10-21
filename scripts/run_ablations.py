@@ -62,8 +62,8 @@ def run_alpha_sweep(
         config["log_path"] = log_path
         
         # Run experiment (simplified version)
-        from sgm_agent.registry import create_wrapped_agent
-        from sgm_agent.base_agent_iface import BaseAgent, Candidate
+        from sparq_agent.registry import create_wrapped_agent
+        from sparq_agent.base_agent_iface import BaseAgent, Candidate
         
         class DummyBaseAgent(BaseAgent):
             def propose_actions(self, obs, k=5):
@@ -122,7 +122,7 @@ def main():
         help="Alpha values to test",
     )
     parser.add_argument("--num-episodes", type=int, default=10, help="Episodes per alpha")
-    parser.add_argument("--config", type=str, default="configs/sgm_default.yaml")
+    parser.add_argument("--config", type=str, default="configs/sparq_default.yaml")
     parser.add_argument("--output-dir", type=str, default="experiments/ablations")
     parser.add_argument("--seed", type=int, default=42)
     

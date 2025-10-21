@@ -1,4 +1,4 @@
-# SGM Agent Quick Start Guide
+# SPARQ Agent Quick Start Guide
 
 ## 1. Installation (2 minutes)
 
@@ -21,11 +21,11 @@ pip install -e . -f setup_sgm.py
 ## 2. Run the Example (1 minute)
 
 ```bash
-python examples/sgm_example.py
+python examples/sparq_example.py
 ```
 
 This demonstrates:
-- Creating an SGM-wrapped agent
+- Creating an SPARQ-wrapped agent
 - Running episodes with retrieval, prior, and lookahead
 - Logging decisions and analyzing results
 
@@ -39,7 +39,7 @@ pytest tests/unit/ -v
 pytest tests/integration/ -v
 
 # Check coverage
-pytest --cov=src/sgm_agent --cov-report=term-missing
+pytest --cov=src/sparq_agent --cov-report=term-missing
 ```
 
 ## 4. Run Your First Experiment (5 minutes)
@@ -51,7 +51,7 @@ mkdir -p experiments/results experiments/plots
 # Run baseline experiment
 python scripts/run_baseline.py \
     --env webshop \
-    --baseline sgm_full \
+    --baseline sparq_full \
     --num-episodes 20 \
     --output-dir experiments/results
 
@@ -75,7 +75,7 @@ python scripts/export_metrics.py \
 ### Step 1: Wrap Your Agent
 
 ```python
-from sgm_agent import create_wrapped_agent
+from sparq_agent import create_wrapped_agent
 from your_agentgym_code import YourReActAgent
 
 # Your existing agent
@@ -83,7 +83,7 @@ base_agent = YourReActAgent()
 
 # Load config
 import yaml
-with open("configs/sgm_default.yaml") as f:
+with open("configs/sparq_default.yaml") as f:
     config = yaml.safe_load(f)
 
 # Merge environment-specific settings
@@ -95,7 +95,7 @@ env_config = {
 }
 
 # Create wrapped agent
-sgm_agent = create_wrapped_agent(base_agent, env_config)
+sparq_agent = create_wrapped_agent(base_agent, env_config)
 ```
 
 ### Step 2: Run Episodes
@@ -103,20 +103,20 @@ sgm_agent = create_wrapped_agent(base_agent, env_config)
 ```python
 # Standard AgentGym episode loop
 for episode in range(num_episodes):
-    sgm_agent.reset()
+    sparq_agent.reset()
     obs = env.reset()
     
     done = False
     while not done:
-        # SGM handles retrieval, prior, lookahead internally
-        action, diagnostics = sgm_agent.step(obs)
+        # SPARQ handles retrieval, prior, lookahead internally
+        action, diagnostics = sparq_agent.step(obs)
         
         # Execute in environment
         obs, reward, done, info = env.step(action)
     
     # Log episode summary
-    if sgm_agent.logger:
-        sgm_agent.logger.log_episode_summary(
+    if sparq_agent.logger:
+        sparq_agent.logger.log_episode_summary(
             episode, 
             info["success"], 
             info["steps"]
@@ -126,7 +126,7 @@ for episode in range(num_episodes):
 ### Step 3: Analyze Results
 
 ```python
-from sgm_agent.logging import AggregatedMetrics
+from sparq_agent.logging import AggregatedMetrics
 
 # Load logs
 records = AggregatedMetrics.load_log("logs/webshop.jsonl")
@@ -141,7 +141,7 @@ print(f"Fallback rate: {stats['fallback_rate']:.1%}")
 
 ## 6. Customize for Your Environment
 
-Edit `configs/sgm_default.yaml` to add your environment:
+Edit `configs/sparq_default.yaml` to add your environment:
 
 ```yaml
 environments:
@@ -166,7 +166,7 @@ environments:
 ### Custom Continuation Function
 
 ```python
-from sgm_agent.lookahead import ShallowSimulator
+from sparq_agent.lookahead import ShallowSimulator
 
 def my_continuation_fn(action, obs, depth):
     """Use your LLM or dynamics model."""
@@ -188,7 +188,7 @@ lookahead_module = ShallowSimulator(
 ### Custom Scoring Rubric
 
 ```python
-from sgm_agent.lookahead import ScoringRubric
+from sparq_agent.lookahead import ScoringRubric
 
 class MyRubric(ScoringRubric):
     def score(self, continuations, obs, params):
@@ -244,9 +244,9 @@ embedding_fn = SentenceTransformerEmbedding()
 
 ## 10. Getting Help
 
-- Check `README_SGM.md` for detailed documentation
+- Check `README_SPARQ.md` for detailed documentation
 - Review test files for usage examples
-- See `examples/sgm_example.py` for complete workflow
+- See `examples/sparq_example.py` for complete workflow
 - Open GitHub issues for bugs or questions
 
 ---

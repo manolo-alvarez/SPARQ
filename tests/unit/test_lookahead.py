@@ -6,8 +6,8 @@ Tests rubric scoring and shallow simulation aggregation.
 
 import pytest
 
-from sgm_agent.base_agent_iface import Candidate
-from sgm_agent.lookahead import (
+from sparq_agent.base_agent_iface import Candidate
+from sparq_agent.lookahead import (
     ShallowSimulator,
     DefaultRubric,
     simple_continuation_fn,

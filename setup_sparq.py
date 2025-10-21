@@ -1,21 +1,21 @@
-"""Setup script for SGM Agent."""
+"""Setup script for SPARQ Agent."""
 
 from setuptools import setup, find_packages
 from pathlib import Path
 
 # Read README
-readme_path = Path(__file__).parent / "README_SGM.md"
+readme_path = Path(__file__).parent / "README_SPARQ.md"
 long_description = readme_path.read_text() if readme_path.exists() else ""
 
 setup(
-    name="sgm-agent",
+    name="sparq-agent",
     version="0.1.0",
-    description="Similarity-Guided Memory Agent for AgentGym",
+    description="SPARQ: Similarity Prior with Adaptive Retrieval and Quick lookahead for AgentGym",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    author="Your Name",
-    author_email="your.email@example.com",
-    url="https://github.com/yourusername/sgm-agent",
+    author="Manolo Alvarez",
+    author_email="manoloac@stanford.edu",
+    url="https://github.com/manolo-alvarez/SPARQ",
     packages=find_packages(where="src"),
     package_dir={"": "src"},
     python_requires=">=3.8",
@@ -34,9 +34,9 @@ setup(
     },
     entry_points={
         "console_scripts": [
-            "sgm-run-baseline=scripts.run_baseline:main",
-            "sgm-run-ablations=scripts.run_ablations:main",
-            "sgm-export-metrics=scripts.export_metrics:main",
+            "sparq-run-baseline=scripts.run_baseline:main",
+            "sparq-run-ablations=scripts.run_ablations:main",
+            "sparq-export-metrics=scripts.export_metrics:main",
         ],
     },
     classifiers=[

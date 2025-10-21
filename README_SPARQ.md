@@ -1,10 +1,10 @@
-# SGM Agent: Similarity-Guided Memory Agent for AgentGym
+# SPARQ Agent: Similarity Prior with Adaptive Retrieval and Quick lookahead Agent for AgentGym
 
 A drop-in policy wrapper that enhances ReAct agents with retrieval-augmented priors, shallow simulations, and adaptive memory retrieval across AgentGym's 14 environments.
 
 ## Overview
 
-SGM Agent implements a sophisticated decision-making system that:
+SPARQ Agent implements a sophisticated decision-making system that:
 
 - **Retrieval Module**: Maintains a vector store of trajectory summaries with fast cosine kNN queries
 - **Prior Module**: Computes similarity-weighted priors V₀(n) via temperature-scaled averaging
@@ -44,8 +44,8 @@ pip install pytest pytest-cov
 ## Quick Start
 
 ```python
-from sgm_agent import create_default_sgm_agent
-from sgm_agent.base_agent_iface import BaseAgent, Candidate
+from sparq_agent import create_default_sparq_agent
+from sparq_agent.base_agent_iface import BaseAgent, Candidate
 
 # Your existing ReAct agent
 class MyReActAgent(BaseAgent):
@@ -56,9 +56,9 @@ class MyReActAgent(BaseAgent):
     def reset(self):
         pass
 
-# Wrap with SGM
+# Wrap with SPARQ
 base_agent = MyReActAgent()
-sgm_agent = create_default_sgm_agent(
+sparq_agent = create_default_sparq_agent(
     base_agent,
     env_id="webshop",
     log_path="logs/webshop.jsonl"
@@ -66,17 +66,17 @@ sgm_agent = create_default_sgm_agent(
 
 # Use as drop-in replacement
 for episode in range(100):
-    sgm_agent.reset()
+    sparq_agent.reset()
     obs = env.reset()
     
     while not done:
-        action, diagnostics = sgm_agent.step(obs)
+        action, diagnostics = sparq_agent.step(obs)
         obs, reward, done, info = env.step(action)
 ```
 
 ## Configuration
 
-See `configs/sgm_default.yaml` for per-environment defaults and ablation configurations.
+See `configs/sparq_default.yaml` for per-environment defaults and ablation configurations.
 
 Key parameters:
 - `k_min`, `k_max`: Retrieval breadth bounds
@@ -89,14 +89,14 @@ Key parameters:
 ### Baselines
 
 ```bash
-# Base ReAct (no SGM)
+# Base ReAct (no SPARQ)
 python scripts/run_baseline.py --env webshop --baseline base_react --num-episodes 50
 
 # ReAct + Prior (fixed k)
 python scripts/run_baseline.py --env webshop --baseline react_prior --num-episodes 50
 
-# Full SGM (elastic k)
-python scripts/run_baseline.py --env webshop --baseline sgm_full --num-episodes 50
+# Full SPARQ (elastic k)
+python scripts/run_baseline.py --env webshop --baseline sparq_full --num-episodes 50
 ```
 
 ### Ablations
@@ -119,14 +119,14 @@ pytest tests/unit/ -v
 pytest tests/integration/ -v
 
 # Coverage
-pytest --cov=src/sgm_agent --cov-report=html
+pytest --cov=src/sparq_agent --cov-report=html
 ```
 
 ## Directory Structure
 
 ```
 .
-├── src/sgm_agent/          # Core implementation
+├── src/sparq_agent/          # Core implementation
 │   ├── base_agent_iface.py # Abstract interfaces
 │   ├── retrieval/          # Vector store & kNN
 │   ├── prior/              # Similarity-weighted priors
@@ -165,7 +165,7 @@ $$k = \text{clip}(k_{\min} + \lambda \cdot u, k_{\min}, k_{\max})$$
 - LMRLGym (Maze, Wordle)
 - Academia, Movie, Sheet, Todo, Weather
 
-Each environment has tuned defaults in `configs/sgm_default.yaml`.
+Each environment has tuned defaults in `configs/sparq_default.yaml`.
 
 ## Logging & Diagnostics
 
@@ -176,7 +176,7 @@ All decisions are logged in JSONL format with:
 
 View diagnostics:
 ```python
-from sgm_agent.logging import AggregatedMetrics, DashboardPlotter
+from sparq_agent.logging import AggregatedMetrics, DashboardPlotter
 
 # Load logs
 records = AggregatedMetrics.load_log("logs/webshop.jsonl")
